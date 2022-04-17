@@ -2,34 +2,26 @@
 import subprocess
 import requests
 import re
-import sys, getopt
+import sys
 import os
-
+import argparse
 
 def main(argv):
     url = "https://holodex.net/api/v2/live"
     req_body = url
-    try:
-        opts, args = getopt.getopt(argv,"hlo")
-    except getopt.GetoptError:
-        print ('holodex.py -h for help')
-        sys.exit(2)
-        #use argparse instead please
-    for opt, arg in opts:
-        if opt == '-h':
-            print ('-l for language: en,ja,ch,es,ru\
-            -o for organization: Hololive, Nijisanji')
-            sys.exit()
-        if opt == "-l":
-            limit = arg #limit the output
-            print("lang ="+language)
-            req_body += "?lang="+language
-        if opt == "-o":
-            org = arg #filter by organization, ex: Hololive, Nijisanji
-            print("org ="+org)
-            req_body += "?org="+org
-    api_key = input("api_key: ")
-    r = requests.get(req_body,headers={'X-APIKEY': '%s' % api_key})
+    parser = argparse.ArgumentParser(description='fetch current live vtubers from holodex')
+    parser.add_argument('--org',
+                        help='filter by organization e.g Hololive, Nijisanji')
+    parser.add_argument('-l', type=int,
+                        help='limit the output by an integer')
+    parser.add_argument('--key',
+                        help='API key')
+    args = parser.parse_args()
+    if args.org:
+        req_body += "?org="+args.org
+    if args.l:
+        req_body += "&?limit="+str(args.l)    
+    r = requests.get(req_body,headers={'X-APIKEY': '%s' % args.key})
     data = r.json()
     for stream in data:
         print('title: ' + stream['title'])

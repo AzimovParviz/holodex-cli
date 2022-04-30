@@ -22,7 +22,7 @@ def main(argv):
     parser.add_argument('--topic',
                         help='topic of the stream (e.g game name, singing')
     args = parser.parse_args()
-    r = requests.get(req_body,headers={'X-APIKEY': '%s' % args.key}, params = {'org': args.org, 'limit': args.l, 'status' : args.status})
+    r = requests.get(req_body,headers={'X-APIKEY': '%s' % args.key}, params = {'org': args.org, 'limit': args.l, 'status' : args.status, 'topic' : args.topic})
     data = r.json()
     if args.source == 'youtube':
         watch = "https://youtube.com/watch/"
